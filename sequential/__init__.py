@@ -1,6 +1,8 @@
 from otree.api import *
 import random
 import numpy as np
+import time
+import json
 
 doc = "Sequential housing offer experiment - Auckland"
 
@@ -202,6 +204,11 @@ class Player(BasePlayer):
     current_offer_number = models.IntegerField(initial=1)
     accepted_price = models.IntegerField()
     final_offer_number = models.IntegerField()
+    
+    # 时间记录
+    round_start_time = models.FloatField()  # 本轮开始时间戳
+    total_decision_time = models.FloatField()  # 本轮总决策时间（秒）
+    decision_times = models.LongStringField()  # 每个offer的决策详情（JSON）
 
 def get_treatment(player):
     return getattr(player.participant, 'treatment', C.TREATMENT_NO_INFO)
@@ -232,6 +239,13 @@ class OfferDecision(Page):
     
     @staticmethod
     def vars_for_template(player):
+        # 记录本轮开始时间（仅第一个offer时）
+        if player.current_offer_number == 1 and player.field_maybe_none('round_start_time') is None:
+            player.round_start_time = time.time()
+            # 初始化participant变量用于临时存储
+            if 'offer_times' not in player.participant.vars:
+                player.participant.vars['offer_times'] = {}
+        
         house = houses[player.round_number - 1]
         offer_list = offers[player.round_number - 1]
         current_offer = offer_list[player.current_offer_number - 1]
@@ -273,17 +287,37 @@ class OfferDecision(Page):
     
     @staticmethod
     def live_method(player, data):
-        """使用live方法处理accept/reject，避免页面跳转"""
+        """使用live方法处理accept/reject，记录时间"""
         offer_list = offers[player.round_number - 1]
         current_offer = offer_list[player.current_offer_number - 1]
         
         action = data.get('action')
+        decision_time_ms = data.get('time', 0)  # 从前端获取决策时间（毫秒）
+        
+        # 记录每个offer的决策时间
+        round_key = f'round_{player.round_number}'
+        if round_key not in player.participant.vars['offer_times']:
+            player.participant.vars['offer_times'][round_key] = []
+        
+        player.participant.vars['offer_times'][round_key].append({
+            'offer_number': player.current_offer_number,
+            'offer_value': current_offer,
+            'decision': action,
+            'decision_time_ms': decision_time_ms
+        })
         
         if action == 'accept':
-            # 接受offer
+            # 接受offer - 计算总时间并保存
             player.accepted_price = current_offer
             player.final_offer_number = player.current_offer_number
             player.payoff = current_offer
+            
+            # 计算总决策时间
+            player.total_decision_time = time.time() - player.round_start_time
+            
+            # 保存所有offer的决策详情为JSON
+            player.decision_times = json.dumps(player.participant.vars['offer_times'][round_key])
+            
             return {0: 'accepted'}
             
         elif action == 'reject':
@@ -304,6 +338,11 @@ class OfferDecision(Page):
                 player.accepted_price = current_offer
                 player.final_offer_number = player.current_offer_number
                 player.payoff = current_offer
+                
+                # 计算总时间
+                player.total_decision_time = time.time() - player.round_start_time
+                player.decision_times = json.dumps(player.participant.vars['offer_times'][round_key])
+                
                 return {0: 'accepted'}
 
 class RoundResults(Page):
@@ -318,6 +357,7 @@ class RoundResults(Page):
             final_offer_number=player.final_offer_number, 
             total_offers=C.MAX_OFFERS,
             cumulative_payoff=sum([p.payoff for p in player.in_all_rounds()]),
+            decision_time_seconds=round(player.total_decision_time, 1),  # 显示决策时间
             treatment=treatment,
             show_avm_range=False,
             show_qv_estimate=False
@@ -345,6 +385,10 @@ class FinalResults(Page):
         average_payoff = total_payoff / C.NUM_ROUNDS
         average_offer_number = sum([p.final_offer_number for p in all_rounds]) / C.NUM_ROUNDS
         
+        # 计算平均决策时间
+        total_time = sum([p.total_decision_time for p in all_rounds])
+        average_time = total_time / C.NUM_ROUNDS
+        
         deals_below = deals_within = deals_above = 0
         for i, p in enumerate(all_rounds):
             house = houses[i]
@@ -359,6 +403,8 @@ class FinalResults(Page):
             total_payoff=total_payoff, 
             average_payoff=int(average_payoff),
             average_offer_number=round(average_offer_number, 1),
+            total_time_seconds=round(total_time, 1),
+            average_time_seconds=round(average_time, 1),
             deals_below_avm=deals_below,
             deals_within_avm=deals_within,
             deals_above_avm=deals_above,

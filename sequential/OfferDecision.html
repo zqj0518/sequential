@@ -72,14 +72,19 @@
     const acceptBtn = document.getElementById('accept-btn');
     const rejectBtn = document.getElementById('reject-btn');
     
+    // 记录当前offer显示时间
+    let offerStartTime = Date.now();
+    
     acceptBtn.addEventListener('click', function() {
-        liveSend({'action': 'accept'});
+        const decisionTime = Date.now() - offerStartTime;
+        liveSend({'action': 'accept', 'time': decisionTime});
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
     });
     
     rejectBtn.addEventListener('click', function() {
-        liveSend({'action': 'reject'});
+        const decisionTime = Date.now() - offerStartTime;
+        liveSend({'action': 'reject', 'time': decisionTime});
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
     });
@@ -88,10 +93,12 @@
         if (data === 'accepted') {
             window.location.href = window.location.href.replace('/OfferDecision/', '/RoundResults/');
         } else if (typeof data === 'object') {
+            // 更新显示
             document.getElementById('offer-number').textContent = data.offer_number;
             document.getElementById('current-offer').textContent = data.new_offer;
             document.getElementById('accept-amount').textContent = data.new_offer;
             
+            // 重新启用按钮
             acceptBtn.disabled = false;
             
             if (data.is_last_offer) {
@@ -100,6 +107,9 @@
                 rejectBtn.disabled = false;
                 rejectBtn.style.display = 'inline-block';
             }
+            
+            // 重置计时器（新的offer开始）
+            offerStartTime = Date.now();
         }
     }
 </script>
