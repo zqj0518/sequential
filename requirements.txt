@@ -1,2 +1,11 @@
+<<<<<<< HEAD
 otree>=5.0.0
 numpy>=1.20.0
+=======
+# oTree-may-overwrite-this-file
+# IF YOU MODIFY THIS FILE, remove these comments. 
+# otherwise, oTree will automatically overwrite it.
+otree>=5.4.0
+psycopg2>=2.8.4
+sentry-sdk==0.7.9
+>>>>>>> 462cb37e00acf6d0675d70f11851905f5e7cf39f

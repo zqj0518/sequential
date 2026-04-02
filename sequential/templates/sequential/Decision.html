@@ -1,0 +1,19 @@
+{% block content %}
+
+<h3>House {{ player.round_number }}</h3>
+
+<p>Suburb: {{ suburb }}</p>
+<p>Floor area: {{ area }} sqm</p>
+<p>Bedrooms: {{ bedrooms }}</p>
+<p>Year built: {{ year }}</p>
+
+<hr>
+
+<h2>Offer {{ offer_number }} / 20</h2>
+
+<h1>{{ offer }} ECU</h1>
+
+<button name="decision" value="Accept">Accept</button>
+<button name="decision" value="Reject">Reject</button>
+
+{% endblock %}
