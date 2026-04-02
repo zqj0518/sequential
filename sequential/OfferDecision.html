@@ -1,0 +1,107 @@
+{% block title %}House {{ round_number }} of {{ total_rounds }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>🏠 Property Details</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Address:</strong> {{ address }}</p>
+                    <p><strong>Location:</strong> {{ suburb }}, Auckland</p>
+                    <p><strong>Bedrooms:</strong> {{ bedrooms }}</p>
+                    <p><strong>Bathrooms:</strong> {{ bathrooms }}</p>
+                    <p><strong>Floor Area:</strong> {{ floor_area }} m²</p>
+                    <p><strong>Land Area:</strong> {{ land_area }} m²</p>
+                    <p><strong>Year Built:</strong> {{ year_built }}</p>
+                    <p><strong>School Zone:</strong> {{ school_zone }}</p>
+
+                    {% if show_avm_range %}
+                    <div class="alert alert-info mt-3">
+                        <h6>📊 AVM Range:</h6>
+                        <p class="mb-1"><strong>Lower:</strong> ${{ avm_lower }}k</p>
+                        <p class="mb-1"><strong>Upper:</strong> ${{ avm_upper }}k</p>
+                        <p class="mb-0"><strong>Midpoint:</strong> ${{ avm_midpoint }}k</p>
+                    </div>
+                    {% elif show_qv_estimate %}
+                    <div class="alert alert-info mt-3">
+                        <h6>📊 QV Estimate:</h6>
+                        <p class="mb-0"><strong>${{ qv_estimate }}k</strong></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4>💰 Current Offer</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5>Offer <span id="offer-number">{{ offer_number }}</span> of {{ max_offers }}</h5>
+                    <div class="my-4">
+                        <h1 class="display-3 text-success">$<span id="current-offer">{{ current_offer }}</span>k</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <button id="accept-btn" class="btn btn-success btn-lg px-5 mx-2">
+                ✓ Accept $<span id="accept-amount">{{ current_offer }}</span>k
+            </button>
+            
+            <button id="reject-btn" class="btn btn-danger btn-lg px-5 mx-2" {% if is_last_offer %}style="display:none"{% endif %}>
+                ✗ Reject & See Next
+            </button>
+            
+            {% if is_last_offer %}
+            <p class="text-warning mt-3">
+                <strong>This is your final offer - you must accept</strong>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    const acceptBtn = document.getElementById('accept-btn');
+    const rejectBtn = document.getElementById('reject-btn');
+    
+    acceptBtn.addEventListener('click', function() {
+        liveSend({'action': 'accept'});
+        acceptBtn.disabled = true;
+        rejectBtn.disabled = true;
+    });
+    
+    rejectBtn.addEventListener('click', function() {
+        liveSend({'action': 'reject'});
+        acceptBtn.disabled = true;
+        rejectBtn.disabled = true;
+    });
+    
+    function liveRecv(data) {
+        if (data === 'accepted') {
+            window.location.href = window.location.href.replace('/OfferDecision/', '/RoundResults/');
+        } else if (typeof data === 'object') {
+            document.getElementById('offer-number').textContent = data.offer_number;
+            document.getElementById('current-offer').textContent = data.new_offer;
+            document.getElementById('accept-amount').textContent = data.new_offer;
+            
+            acceptBtn.disabled = false;
+            
+            if (data.is_last_offer) {
+                rejectBtn.style.display = 'none';
+            } else {
+                rejectBtn.disabled = false;
+                rejectBtn.style.display = 'inline-block';
+            }
+        }
+    }
+</script>
+{% endblock %}

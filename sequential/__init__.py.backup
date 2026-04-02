@@ -1,0 +1,214 @@
+from otree.api import *
+import random
+import numpy as np
+
+doc = "Sequential housing offer experiment with AVM information treatments"
+
+
+class C(BaseConstants):
+    NAME_IN_URL = 'sequential'
+    PLAYERS_PER_GROUP = None
+    NUM_ROUNDS = 10
+    MAX_OFFERS = 20
+    
+    TREATMENT_NO_INFO = 'no_info'
+    TREATMENT_AVM_RANGE = 'avm_range'
+    TREATMENT_QV_POINT = 'qv_point'
+
+
+houses = [
+    dict(suburb="Manurewa", area=120, bedrooms=3, year=1975, 
+         sale_price=580, avm_lower=620, avm_upper=680, qv_estimate=650),
+    dict(suburb="Papakura", area=100, bedrooms=3, year=1982, 
+         sale_price=520, avm_lower=560, avm_upper=620, qv_estimate=590),
+    dict(suburb="Otara", area=110, bedrooms=3, year=1978, 
+         sale_price=480, avm_lower=530, avm_upper=590, qv_estimate=560),
+    dict(suburb="Mt Wellington", area=150, bedrooms=3, year=1992, 
+         sale_price=850, avm_lower=820, avm_upper=900, qv_estimate=860),
+    dict(suburb="Glen Innes", area=140, bedrooms=3, year=1985, 
+         sale_price=780, avm_lower=750, avm_upper=820, qv_estimate=785),
+    dict(suburb="Onehunga", area=160, bedrooms=3, year=2003, 
+         sale_price=920, avm_lower=880, avm_upper=960, qv_estimate=920),
+    dict(suburb="Ellerslie", area=180, bedrooms=4, year=1995, 
+         sale_price=1150, avm_lower=1100, avm_upper=1200, qv_estimate=1150),
+    dict(suburb="Remuera", area=200, bedrooms=4, year=2012, 
+         sale_price=2100, avm_lower=1800, avm_upper=2000, qv_estimate=1900),
+    dict(suburb="Parnell", area=170, bedrooms=3, year=2005, 
+         sale_price=1650, avm_lower=1400, avm_upper=1550, qv_estimate=1475),
+    dict(suburb="Mission Bay", area=220, bedrooms=4, year=2015, 
+         sale_price=2500, avm_lower=2100, avm_upper=2300, qv_estimate=2200),
+]
+
+
+def generate_offers(mean_price, sd_percentage=0.15, num_offers=20, seed=None):
+    if seed is not None:
+        np.random.seed(seed)
+    sd = mean_price * sd_percentage
+    offers = np.random.normal(mean_price, sd, num_offers)
+    offers = [max(int(round(offer)), 100) for offer in offers]
+    random.shuffle(offers)
+    return offers
+
+
+offers = []
+for i, house in enumerate(houses):
+    house_offers = generate_offers(
+        mean_price=house['sale_price'],
+        sd_percentage=0.15,
+        num_offers=C.MAX_OFFERS,
+        seed=1000 + i
+    )
+    offers.append(house_offers)
+
+
+class Subsession(BaseSubsession):
+    pass
+
+
+def creating_session(subsession: Subsession):
+    import itertools
+    treatments = itertools.cycle([
+        C.TREATMENT_NO_INFO,
+        C.TREATMENT_AVM_RANGE,
+        C.TREATMENT_QV_POINT
+    ])
+    for player in subsession.get_players():
+        if subsession.round_number == 1:
+            player.participant.treatment = next(treatments)
+
+
+class Group(BaseGroup):
+    pass
+
+
+class Player(BasePlayer):
+    offer_number = models.IntegerField(initial=1)
+    decision = models.StringField(choices=["Accept", "Reject"], blank=True)
+    accepted_price = models.IntegerField(blank=True)
+    final_offer_number = models.IntegerField(blank=True)
+
+
+def get_treatment(player: Player):
+    return player.participant.treatment if hasattr(player.participant, 'treatment') else C.TREATMENT_NO_INFO
+
+
+class Introduction(Page):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == 1
+    
+    @staticmethod
+    def vars_for_template(player):
+        treatment = get_treatment(player)
+        if treatment == C.TREATMENT_AVM_RANGE:
+            instruction_text = "You will see the AVM (Automated Valuation Model) range for each property."
+        elif treatment == C.TREATMENT_QV_POINT:
+            instruction_text = "You will see the QV (Quotable Value) estimate for each property."
+        else:
+            instruction_text = "You will see basic property information."
+        return dict(instruction_text=instruction_text, treatment=treatment)
+
+
+class Decision(Page):
+    form_model = 'player'
+    form_fields = ['decision']
+    
+    @staticmethod
+    def vars_for_template(player):
+        house = houses[player.round_number - 1]
+        offer_list = offers[player.round_number - 1]
+        current_offer = offer_list[player.offer_number - 1]
+        treatment = get_treatment(player)
+        avm_midpoint = (house['avm_lower'] + house['avm_upper']) / 2
+        
+        context = dict(
+            suburb=house["suburb"], area=house["area"], bedrooms=house["bedrooms"],
+            year=house["year"], offer=current_offer, offer_number=player.offer_number,
+            max_offers=C.MAX_OFFERS, treatment=treatment,
+            round_number=player.round_number, total_rounds=C.NUM_ROUNDS
+        )
+        
+        if treatment == C.TREATMENT_AVM_RANGE:
+            context.update(dict(show_avm_range=True, avm_lower=house['avm_lower'],
+                              avm_upper=house['avm_upper'], avm_midpoint=int(avm_midpoint)))
+        elif treatment == C.TREATMENT_QV_POINT:
+            context.update(dict(show_qv_estimate=True, qv_estimate=house['qv_estimate']))
+        
+        return context
+    
+    @staticmethod
+    def before_next_page(player, timeout_happened):
+        offer_list = offers[player.round_number - 1]
+        current_offer = offer_list[player.offer_number - 1]
+        
+        if player.decision == "Accept":
+            player.accepted_price = current_offer
+            player.final_offer_number = player.offer_number
+            player.payoff = current_offer
+        else:
+            if player.offer_number < C.MAX_OFFERS:
+                player.offer_number += 1
+            else:
+                player.accepted_price = current_offer
+                player.final_offer_number = player.offer_number
+                player.payoff = current_offer
+    
+    @staticmethod
+    def is_displayed(player):
+        # 修复：使用 field_maybe_none() 检查是否已接受报价
+        return player.field_maybe_none('accepted_price') is None
+
+
+class RoundResults(Page):
+    @staticmethod
+    def vars_for_template(player):
+        house = houses[player.round_number - 1]
+        treatment = get_treatment(player)
+        
+        context = dict(
+            suburb=house["suburb"], accepted_price=player.accepted_price,
+            final_offer_number=player.final_offer_number, total_offers=C.MAX_OFFERS,
+            cumulative_payoff=sum([p.payoff for p in player.in_all_rounds()]),
+            treatment=treatment
+        )
+        
+        if treatment == C.TREATMENT_AVM_RANGE:
+            context.update(dict(show_avm_range=True, avm_lower=house['avm_lower'],
+                              avm_upper=house['avm_upper']))
+        elif treatment == C.TREATMENT_QV_POINT:
+            context.update(dict(show_qv_estimate=True, qv_estimate=house['qv_estimate']))
+        
+        return context
+
+
+class FinalResults(Page):
+    @staticmethod
+    def is_displayed(player):
+        return player.round_number == C.NUM_ROUNDS
+    
+    @staticmethod
+    def vars_for_template(player):
+        all_rounds = player.in_all_rounds()
+        total_payoff = sum([p.payoff for p in all_rounds])
+        average_payoff = total_payoff / C.NUM_ROUNDS
+        average_offer_number = sum([p.final_offer_number for p in all_rounds]) / C.NUM_ROUNDS
+        
+        deals_below_avm = deals_within_avm = deals_above_avm = 0
+        for i, p in enumerate(all_rounds):
+            house = houses[i]
+            if p.accepted_price < house['avm_lower']:
+                deals_below_avm += 1
+            elif p.accepted_price > house['avm_upper']:
+                deals_above_avm += 1
+            else:
+                deals_within_avm += 1
+        
+        return dict(
+            total_payoff=total_payoff, average_payoff=int(average_payoff),
+            average_offer_number=round(average_offer_number, 1),
+            deals_below_avm=deals_below_avm, deals_within_avm=deals_within_avm,
+            deals_above_avm=deals_above_avm, treatment=get_treatment(player)
+        )
+
+
+page_sequence = [Introduction, Decision, RoundResults, FinalResults]

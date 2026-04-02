@@ -1,0 +1,69 @@
+{% block title %}Round {{ player.round_number }} Complete{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            <h3>✓ House in {{ suburb }} - Deal Completed</h3>
+        </div>
+        <div class="card-body">
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Your Decision:</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Accepted Price:</strong> 
+                            <span class="text-success">${{ accepted_price }}k</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Offer Number:</strong> 
+                            {{ final_offer_number }} of {{ total_offers }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Earnings this Round:</strong> 
+                            <span class="text-primary">{{ accepted_price }} points</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-6">
+                    <h4>Summary:</h4>
+                    
+                    {% if show_avm_range %}
+                    <div class="alert alert-secondary">
+                        <p><strong>AVM Range:</strong> ${{ avm_lower }}k - ${{ avm_upper }}k</p>
+                        <p class="mb-0"><strong>Your Price:</strong> ${{ accepted_price }}k</p>
+                    </div>
+                    {% elif show_qv_estimate %}
+                    <div class="alert alert-secondary">
+                        <p><strong>QV Estimate:</strong> ${{ qv_estimate }}k</p>
+                        <p class="mb-0"><strong>Your Price:</strong> ${{ accepted_price }}k</p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-success">
+                        <h5>Deal Accepted!</h5>
+                        <p class="mb-0">You accepted offer number {{ final_offer_number }} out of {{ total_offers }}.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <hr>
+            
+            <div class="row mt-3">
+                <div class="col-12">
+                    <div class="alert alert-light">
+                        <strong>Cumulative Earnings:</strong> {{ cumulative_payoff }} points
+                        <br>
+                        <strong>Houses Completed:</strong> {{ player.round_number }} of 10
+                    </div>
+                </div>
+            </div>
+            
+            {% next_button %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

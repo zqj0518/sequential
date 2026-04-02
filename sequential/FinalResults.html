@@ -1,0 +1,87 @@
+{% block title %}Experiment Complete{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <h2>🎉 Experiment Complete!</h2>
+        </div>
+        <div class="card-body">
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Your Performance</h3>
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <h4 class="text-primary">Total Earnings: {{ total_payoff }} points</h4>
+                            <p class="mb-0">Average per house: {{ average_payoff }} points</p>
+                        </div>
+                    </div>
+                    
+                    <h5>Strategy Analysis:</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Average Offer Number:</strong> {{ average_offer_number }}
+                            <br>
+                            <small class="text-muted">
+                                {% if average_offer_number < 5 %}
+                                    You tended to accept offers quickly
+                                {% elif average_offer_number > 10 %}
+                                    You were patient and waited for better offers
+                                {% else %}
+                                    You showed moderate patience
+                                {% endif %}
+                            </small>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-6">
+                    <h3>Deal Quality Summary</h3>
+                    
+                    <table class="table">
+                        <tr>
+                            <td>✅ Below AVM (Good Deals):</td>
+                            <td><strong>{{ deals_below_avm }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>⚖️ Within AVM (Fair Deals):</td>
+                            <td><strong>{{ deals_within_avm }}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>❌ Above AVM (Expensive):</td>
+                            <td><strong>{{ deals_above_avm }}</strong></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            
+            <hr class="my-4">
+            
+            <div class="alert alert-info">
+                <h5>💵 Payment Information</h5>
+                <p class="mb-0">Your total earnings: <strong>{{ total_payoff }} points</strong></p>
+            </div>
+            
+            {% if treatment == 'avm_range' %}
+            <div class="alert alert-secondary">
+                <strong>Your Treatment:</strong> You received AVM range information
+            </div>
+            {% elif treatment == 'qv_point' %}
+            <div class="alert alert-secondary">
+                <strong>Your Treatment:</strong> You received QV point estimates
+            </div>
+            {% else %}
+            <div class="alert alert-secondary">
+                <strong>Your Treatment:</strong> You received basic property information only
+            </div>
+            {% endif %}
+            
+            <div class="text-center mt-4">
+                <h4>Thank you for participating!</h4>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

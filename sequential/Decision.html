@@ -1,0 +1,84 @@
+{% block title %}House {{ round_number }} of {{ total_rounds }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>🏠 Property Details</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Location:</strong> {{ suburb }}, Auckland</p>
+                    <p><strong>Floor Area:</strong> {{ area }} m²</p>
+                    <p><strong>Bedrooms:</strong> {{ bedrooms }}</p>
+                    <p><strong>Year Built:</strong> {{ year }}</p>
+                    
+                    {% if show_avm_range %}
+                    <div class="alert alert-info mt-3">
+                        <h6>📊 AVM Range:</h6>
+                        <p class="mb-1"><strong>Lower:</strong> ${{ avm_lower }}k</p>
+                        <p class="mb-1"><strong>Upper:</strong> ${{ avm_upper }}k</p>
+                        <p class="mb-0"><strong>Midpoint:</strong> ${{ avm_midpoint }}k</p>
+                    </div>
+                    {% elif show_qv_estimate %}
+                    <div class="alert alert-info mt-3">
+                        <h6>📊 QV Estimate:</h6>
+                        <p class="mb-0"><strong>${{ qv_estimate }}k</strong></p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4>💰 Current Offer</h4>
+                </div>
+                <div class="card-body text-center">
+                    <h5>Offer {{ offer_number }} of {{ max_offers }}</h5>
+                    <div class="my-4">
+                        <h1 class="display-3 text-success">${{ offer }}k</h1>
+                    </div>
+                    <p class="text-muted">
+                        {% if offer_number < max_offers %}
+                            Offer {{ offer_number }} of {{ max_offers }}
+                        {% else %}
+                            This is your final offer!
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% formfields %}
+                    
+                    <div class="mt-3">
+                        <button type="submit" name="decision" value="Accept" 
+                                class="btn btn-success btn-lg px-5 mx-2">
+                            ✓ Accept ${{ offer }}k
+                        </button>
+                        
+                        {% if offer_number < max_offers %}
+                        <button type="submit" name="decision" value="Reject" 
+                                class="btn btn-danger btn-lg px-5 mx-2">
+                            ✗ Reject & See Next
+                        </button>
+                        {% else %}
+                        <p class="text-warning mt-3">
+                            <strong>You must accept this final offer</strong>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
