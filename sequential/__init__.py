@@ -15,165 +15,159 @@ class C(BaseConstants):
     TREATMENT_QV_POINT = 'qv_point'
 
 # 10套奥克兰房产 - 基于20# 数据来源参考：OneRoof, Homes.co.nz, QV, Barfoot & Thompson 市场报告
+# 10套奥克兰房产
+# 数据来源参考：OneRoof, Homes.co.nz, QV, Barfoot & Thompson 市场报告
 
 houses = [
 
-    # ===== UNDER AVM (成交价低于 AVM - 3套) =====
-
     dict(
-        address="12 Mahia Road",
-        suburb="Manurewa",
-        bedrooms=3,
-        bathrooms=1,
-        floor_area=110,
-        land_area=620,
-        year_built=1975,
-        school_zone=["Manurewa East School","Alfriston College"],
-        sale_price=565,
-        avm_lower=610,
-        avm_upper=670,
-        qv_estimate=640
+        address="5 Tainui Street",
+        suburb="Torbay",
+        bedrooms=4,
+        bathrooms=3,
+        floor_area=220,
+        land_area=611,
+        year_built="1960s",
+        school_zone=["Long Bay School", "Torbay School"],
+        sale_price=1613,
+        avm_lower=1252,
+        avm_upper=1464,
+        qv_estimate=1290
     ),
 
     dict(
-        address="8 Clevedon Road",
-        suburb="Papakura",
+        address="9/52B Rosedale Road",
+        suburb="Rosedale",
         bedrooms=3,
-        bathrooms=1,
-        floor_area=95,
-        land_area=540,
-        year_built=1981,
-        school_zone=["Papakura Central School","Papakura High School"],
-        sale_price=505,
-        avm_lower=550,
-        avm_upper=610,
-        qv_estimate=575
+        bathrooms=2,
+        floor_area=148,
+        land_area=81,
+        year_built="2020",
+        school_zone=["St John's School", "Murrays Bay School"],
+        sale_price=966,
+        avm_lower=1000,
+        avm_upper=1132,
+        qv_estimate=1020
     ),
 
     dict(
-        address="21 Bairds Road",
+        address="5 Beacholm Road",
+        suburb="Takapuna",
+        bedrooms=4,
+        bathrooms=1,
+        floor_area=210,
+        land_area=497,
+        year_built="1950s",
+        school_zone=["Takapuna School", "Hauraki School"],
+        sale_price=1943,
+        avm_lower=1968,
+        avm_upper=2476,
+        qv_estimate=2070
+    ),
+
+    dict(
+        address="1 Weona Place",
+        suburb="Westmere",
+        bedrooms=3,
+        bathrooms=3,
+        floor_area=323,
+        land_area=512,
+        year_built="2010s",
+        school_zone=["Westmere School (Auckland)", "St Francis Catholic School (Pt Chevalier)"],
+        sale_price=4175,
+        avm_lower=3962,
+        avm_upper=4971,
+        qv_estimate=4160
+    ),
+
+    dict(
+        address="1 Hall Road",
+        suburb="Glenfield",
+        bedrooms=5,
+        bathrooms=5,
+        floor_area=240,
+        land_area=1330,
+        year_built="1970s",
+        school_zone=["Glenfield Primary School", "Manuka Primary School"],
+        sale_price=1550,
+        avm_lower=1681,
+        avm_upper=2275,
+        qv_estimate=2150
+    ),
+
+    dict(
+        address="36 Woodside Road",
+        suburb="Mount Eden",
+        bedrooms=5,
+        bathrooms=3,
+        floor_area=256,
+        land_area=1062,
+        year_built="1910s",
+        school_zone=["Maungawhau School", "Our Lady Sacred Heart School (Epsom)", "Good Shepherd School (Balmoral)"],
+        sale_price=4625,
+        avm_lower=3319,
+        avm_upper=4004,
+        qv_estimate=3610
+    ),
+
+    dict(
+        address="12 Valder Avenue",
         suburb="Otara",
         bedrooms=3,
         bathrooms=1,
-        floor_area=102,
-        land_area=600,
-        year_built=1974,
-        school_zone=["Tangaroa College","Otara Primary"],
-        sale_price=485,
-        avm_lower=530,
-        avm_upper=590,
-        qv_estimate=555
-    ),
-
-
-    # ===== WITHIN AVM (正常成交 - 4套) =====
-
-    dict(
-        address="44 Panama Road",
-        suburb="Mount Wellington",
-        bedrooms=3,
-        bathrooms=2,
-        floor_area=140,
-        land_area=480,
-        year_built=1994,
-        school_zone=["Panama Road School","One Tree Hill College"],
-        sale_price=875,
-        avm_lower=840,
-        avm_upper=920,
-        qv_estimate=885
+        floor_area=92,
+        land_area=513,
+        year_built="2020s",
+        school_zone=["East Tamaki School", "Sancta Maria Catholic Primary School"],
+        sale_price=607,
+        avm_lower=668,
+        avm_upper=750,
+        qv_estimate=710
     ),
 
     dict(
-        address="15 West Tamaki Road",
-        suburb="Glen Innes",
+        address="86 Bollard Avenue",
+        suburb="New Windsor",
         bedrooms=3,
         bathrooms=1,
-        floor_area=125,
-        land_area=520,
-        year_built=1987,
-        school_zone=["Glen Innes School","Tamaki College"],
-        sale_price=805,
-        avm_lower=770,
-        avm_upper=840,
-        qv_estimate=810
-    ),
-
-    dict(
-        address="33 Arthur Street",
-        suburb="Onehunga",
-        bedrooms=3,
-        bathrooms=2,
-        floor_area=150,
-        land_area=400,
-        year_built=2004,
-        school_zone=["Onehunga Primary","Onehunga High School"],
-        sale_price=945,
-        avm_lower=900,
-        avm_upper=980,
-        qv_estimate=940
-    ),
-
-    dict(
-        address="18 Ladies Mile",
-        suburb="Ellerslie",
-        bedrooms=4,
-        bathrooms=2,
-        floor_area=175,
+        floor_area=126,
         land_area=500,
-        year_built=1998,
-        school_zone=["Ellerslie School","One Tree Hill College"],
-        sale_price=1185,
-        avm_lower=1140,
-        avm_upper=1240,
-        qv_estimate=1195
+        year_built="1930s",
+        school_zone=["Avondale Primary School (Auckland)", "Jireh Christian School"],
+        sale_price=1240,
+        avm_lower=1173,
+        avm_upper=1334,
+        qv_estimate=1220
     ),
 
-
-    # ===== ABOVE AVM (成交价高于 AVM - 3套) =====
-
     dict(
-        address="26 Upland Road",
-        suburb="Remuera",
+        address="1A Mozeley Avenue",
+        suburb="Devonport",
         bedrooms=4,
-        bathrooms=3,
-        floor_area=195,
-        land_area=680,
-        year_built=2015,
-        school_zone=["Remuera Primary","Remuera Intermediate","Selwyn College"],
-        sale_price=2260,
-        avm_lower=1950,
-        avm_upper=2150,
-        qv_estimate=2060
+        bathrooms=1,
+        floor_area=258,
+        land_area=887,
+        year_built="2010s",
+        school_zone=["Devonport Primary School", "St Leo's Catholic School (Devonport)"],
+        sale_price=3260,
+        avm_lower=2459,
+        avm_upper=3102,
+        qv_estimate=2570
     ),
 
     dict(
-        address="9 Cleveland Road",
-        suburb="Parnell",
+        address="63 Nimstedt Avenue",
+        suburb="Oteha",
         bedrooms=3,
         bathrooms=2,
-        floor_area=165,
-        land_area=420,
-        year_built=2008,
-        school_zone=["Parnell School","Auckland Grammar","Epsom Girls Grammar"],
-        sale_price=1730,
-        avm_lower=1480,
-        avm_upper=1620,
-        qv_estimate=1560
-    ),
-
-    dict(
-        address="52 Tamaki Drive",
-        suburb="Mission Bay",
-        bedrooms=4,
-        bathrooms=3,
-        floor_area=210,
-        land_area=730,
-        year_built=2018,
-        school_zone=["Kohimarama School","Selwyn College"],
-        sale_price=2690,
-        avm_lower=2280,
-        avm_upper=2480,
-        qv_estimate=2390
+        floor_area=148,
+        land_area=500,
+        year_built="2000s",
+        school_zone=["Oteha Valley School", "City Impact Church School"],
+        sale_price=1320,
+        avm_lower=1162,
+        avm_upper=1334,
+        qv_estimate=1280
     ),
 ]
 
