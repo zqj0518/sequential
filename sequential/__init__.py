@@ -21,7 +21,6 @@ class C(BaseConstants):
 houses = [
 
     dict(
-        address="5 Tainui Street",
         suburb="Torbay",
         bedrooms=4,
         bathrooms=3,
@@ -36,7 +35,6 @@ houses = [
     ),
 
     dict(
-        address="9/52B Rosedale Road",
         suburb="Rosedale",
         bedrooms=3,
         bathrooms=2,
@@ -51,7 +49,6 @@ houses = [
     ),
 
     dict(
-        address="5 Beacholm Road",
         suburb="Takapuna",
         bedrooms=4,
         bathrooms=1,
@@ -66,7 +63,6 @@ houses = [
     ),
 
     dict(
-        address="1 Weona Place",
         suburb="Westmere",
         bedrooms=3,
         bathrooms=3,
@@ -81,7 +77,6 @@ houses = [
     ),
 
     dict(
-        address="1 Hall Road",
         suburb="Glenfield",
         bedrooms=5,
         bathrooms=5,
@@ -96,7 +91,6 @@ houses = [
     ),
 
     dict(
-        address="36 Woodside Road",
         suburb="Mount Eden",
         bedrooms=5,
         bathrooms=3,
@@ -111,7 +105,6 @@ houses = [
     ),
 
     dict(
-        address="12 Valder Avenue",
         suburb="Otara",
         bedrooms=3,
         bathrooms=1,
@@ -126,7 +119,6 @@ houses = [
     ),
 
     dict(
-        address="86 Bollard Avenue",
         suburb="New Windsor",
         bedrooms=3,
         bathrooms=1,
@@ -141,7 +133,6 @@ houses = [
     ),
 
     dict(
-        address="1A Mozeley Avenue",
         suburb="Devonport",
         bedrooms=4,
         bathrooms=1,
@@ -156,7 +147,6 @@ houses = [
     ),
 
     dict(
-        address="63 Nimstedt Avenue",
         suburb="Oteha",
         bedrooms=3,
         bathrooms=2,
@@ -251,7 +241,6 @@ class OfferDecision(Page):
         is_last_offer = (player.current_offer_number == C.MAX_OFFERS)
         
         context = dict(
-    address=house["address"],
     suburb=house["suburb"],
     bedrooms=house["bedrooms"],
     bathrooms=house["bathrooms"],
