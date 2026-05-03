@@ -7,7 +7,7 @@
             <h2>🎉 Experiment Complete!</h2>
         </div>
         <div class="card-body">
-            
+
             <div class="row">
                 <div class="col-md-6">
                     <h3>Your Performance</h3>
@@ -17,7 +17,7 @@
                             <p class="mb-0">Average per house: {{ average_payoff }} points</p>
                         </div>
                     </div>
-                    
+
                     <h5>Strategy Analysis:</h5>
                     <ul class="list-group">
                         <li class="list-group-item">
@@ -33,54 +33,56 @@
                                 {% endif %}
                             </small>
                         </li>
+                        <li class="list-group-item">
+                            <strong>Average Decision Time:</strong> {{ average_time_seconds }} seconds per round
+                            <br>
+                            <small class="text-muted">Total time: {{ total_time_seconds }} seconds</small>
+                        </li>
                     </ul>
                 </div>
-                
+
                 <div class="col-md-6">
                     <h3>Deal Quality Summary</h3>
-                    
+                    <p class="text-muted small">Bands defined relative to QV (±5%).</p>
+
                     <table class="table">
                         <tr>
-                            <td>✅ Below AVM (Good Deals):</td>
-                            <td><strong>{{ deals_below_avm }}</strong></td>
+                            <td>✅ Below QV (Good Deals):</td>
+                            <td><strong>{{ deals_below_qv }}</strong></td>
                         </tr>
                         <tr>
-                            <td>⚖️ Within AVM (Fair Deals):</td>
-                            <td><strong>{{ deals_within_avm }}</strong></td>
+                            <td>⚖️ Near QV (Fair Deals):</td>
+                            <td><strong>{{ deals_near_qv }}</strong></td>
                         </tr>
                         <tr>
-                            <td>❌ Above AVM (Expensive):</td>
-                            <td><strong>{{ deals_above_avm }}</strong></td>
+                            <td>❌ Above QV (Expensive):</td>
+                            <td><strong>{{ deals_above_qv }}</strong></td>
                         </tr>
                     </table>
                 </div>
             </div>
-            
+
             <hr class="my-4">
-            
+
             <div class="alert alert-info">
                 <h5>💵 Payment Information</h5>
                 <p class="mb-0">Your total earnings: <strong>{{ total_payoff }} points</strong></p>
             </div>
-            
-            {% if treatment == 'avm_range' %}
+
+            {% if treatment == 'qv_point' %}
             <div class="alert alert-secondary">
-                <strong>Your Treatment:</strong> You received AVM range information
-            </div>
-            {% elif treatment == 'qv_point' %}
-            <div class="alert alert-secondary">
-                <strong>Your Treatment:</strong> You received QV point estimates
+                <strong>Your Treatment:</strong> You received QV point estimates (G2)
             </div>
             {% else %}
             <div class="alert alert-secondary">
-                <strong>Your Treatment:</strong> You received basic property information only
+                <strong>Your Treatment:</strong> You received basic property information only (G1)
             </div>
             {% endif %}
-            
+
             <div class="text-center mt-4">
                 <h4>Thank you for participating!</h4>
             </div>
-            
+
         </div>
     </div>
 </div>

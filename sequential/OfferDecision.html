@@ -17,14 +17,7 @@
                     <p><strong>Year Built:</strong> {{ year_built }}</p>
                     <p><strong>School Zone:</strong> {{ school_zone }}</p>
 
-                    {% if show_avm_range %}
-                    <div class="alert alert-info mt-3">
-                        <h6>📊 AVM Range:</h6>
-                        <p class="mb-1"><strong>Lower:</strong> ${{ avm_lower }}k</p>
-                        <p class="mb-1"><strong>Upper:</strong> ${{ avm_upper }}k</p>
-                        <p class="mb-0"><strong>Midpoint:</strong> ${{ avm_midpoint }}k</p>
-                    </div>
-                    {% elif show_qv_estimate %}
+                    {% if show_qv_estimate %}
                     <div class="alert alert-info mt-3">
                         <h6>📊 QV Estimate:</h6>
                         <p class="mb-0"><strong>${{ qv_estimate }}k</strong></p>
@@ -33,7 +26,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header bg-success text-white">
@@ -48,22 +41,20 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row mt-4">
         <div class="col-12 text-center">
             <button id="accept-btn" class="btn btn-success btn-lg px-5 mx-2">
                 ✓ Accept $<span id="accept-amount">{{ current_offer }}</span>k
             </button>
-            
+
             <button id="reject-btn" class="btn btn-danger btn-lg px-5 mx-2" {% if is_last_offer %}style="display:none"{% endif %}>
-                ✗ Reject & See Next
+                ✗ Reject &amp; See Next
             </button>
-            
-            {% if is_last_offer %}
-            <p class="text-warning mt-3">
-                <strong>This is your final offer - you must accept</strong>
+
+            <p id="last-offer-warning" class="text-warning mt-3" {% if not is_last_offer %}style="display:none"{% endif %}>
+                <strong>This is your final offer — you must accept</strong>
             </p>
-            {% endif %}
         </div>
     </div>
 </div>
@@ -71,44 +62,43 @@
 <script>
     const acceptBtn = document.getElementById('accept-btn');
     const rejectBtn = document.getElementById('reject-btn');
-    
-    // 记录当前offer显示时间
+    const lastOfferWarning = document.getElementById('last-offer-warning');
+
     let offerStartTime = Date.now();
-    
+
     acceptBtn.addEventListener('click', function() {
         const decisionTime = Date.now() - offerStartTime;
         liveSend({'action': 'accept', 'time': decisionTime});
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
     });
-    
+
     rejectBtn.addEventListener('click', function() {
         const decisionTime = Date.now() - offerStartTime;
         liveSend({'action': 'reject', 'time': decisionTime});
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
     });
-    
+
     function liveRecv(data) {
         if (data === 'accepted') {
             window.location.href = window.location.href.replace('/OfferDecision/', '/RoundResults/');
         } else if (typeof data === 'object') {
-            // 更新显示
             document.getElementById('offer-number').textContent = data.offer_number;
             document.getElementById('current-offer').textContent = data.new_offer;
             document.getElementById('accept-amount').textContent = data.new_offer;
-            
-            // 重新启用按钮
+
             acceptBtn.disabled = false;
-            
+
             if (data.is_last_offer) {
                 rejectBtn.style.display = 'none';
+                lastOfferWarning.style.display = 'block';
             } else {
                 rejectBtn.disabled = false;
                 rejectBtn.style.display = 'inline-block';
+                lastOfferWarning.style.display = 'none';
             }
-            
-            // 重置计时器（新的offer开始）
+
             offerStartTime = Date.now();
         }
     }

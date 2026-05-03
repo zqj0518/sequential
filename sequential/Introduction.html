@@ -4,9 +4,9 @@
 <div class="card" style="max-width: 800px; margin: 20px auto;">
     <div class="card-body">
         <h2>Welcome!</h2>
-        
+
         <p>{{ instruction_text }}</p>
-        
+
         <div class="alert alert-info">
             <h5>How it works:</h5>
             <ul>
@@ -17,16 +17,11 @@
                 <li>Your total earnings depend on the prices you accept</li>
             </ul>
         </div>
-        
-        {% if treatment == 'avm_range' %}
+
+        {% if treatment == 'qv_point' %}
         <div class="alert alert-success">
             <h5>📊 Additional Information:</h5>
-            <p>You will see the <strong>AVM (Automated Valuation Model)</strong> range for each property.</p>
-        </div>
-        {% elif treatment == 'qv_point' %}
-        <div class="alert alert-success">
-            <h5>📊 Additional Information:</h5>
-            <p>You will see the <strong>QV (Quotable Value)</strong> estimate for each property.</p>
+            <p>You will see the <strong>QV (Quotable Value)</strong> point estimate for each property.</p>
         </div>
         {% else %}
         <div class="alert alert-warning">
@@ -34,7 +29,7 @@
             <p>You will see basic property information including location, size, number of bedrooms, and year built.</p>
         </div>
         {% endif %}
-        
+
         {% next_button %}
     </div>
 </div>

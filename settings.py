@@ -4,7 +4,7 @@ SESSION_CONFIGS = [
     dict(
         name='sequential',
         display_name="Sequential Housing Experiment",
-        num_demo_participants=3,
+        num_demo_participants=2,
         app_sequence=['sequential'],
     ),
 ]
