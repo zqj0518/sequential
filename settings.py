@@ -15,7 +15,7 @@ SESSION_CONFIG_DEFAULTS = dict(
     doc=""
 )
 
-PARTICIPANT_FIELDS = ['treatment']
+PARTICIPANT_FIELDS = ['treatment', 'gender', 'ethnicity']
 SESSION_FIELDS = []
 
 LANGUAGE_CODE = 'en'
