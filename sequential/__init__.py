@@ -29,7 +29,7 @@ class C(BaseConstants):
     # Ethnicity checkbox fields (Stats NZ Level 1, multi-response)
     ETH_FIELDS = [
         'eth_european', 'eth_maori', 'eth_pacific',
-        'eth_asian', 'eth_melaa', 'eth_other', 'eth_no_answer',
+        'eth_asian', 'eth_melaa', 'eth_other',
     ]
 
 
@@ -237,11 +237,6 @@ class Player(BasePlayer):
     eth_other = models.BooleanField(
         blank=True, widget=widgets.CheckboxInput,
         label="Other ethnicity")
-    eth_no_answer = models.BooleanField(
-        blank=True, widget=widgets.CheckboxInput,
-        label="Prefer not to say")
-    eth_other_text = models.StringField(
-        blank=True, label="If 'Other', please specify")
 
     # Flattened, analysis-friendly copy of the ethnicity selection
     # e.g. "european|asian". Written in before_next_page.
@@ -258,7 +253,7 @@ def get_treatment(player):
 
 class Introduction(Page):
     form_model = 'player'
-    form_fields = ['gender'] + C.ETH_FIELDS + ['eth_other_text']
+    form_fields = ['gender'] + C.ETH_FIELDS
 
     @staticmethod
     def is_displayed(player):
@@ -267,9 +262,7 @@ class Introduction(Page):
     @staticmethod
     def error_message(player, values):
         if not any(values[f] for f in C.ETH_FIELDS):
-            return "Please select at least one ethnicity option (or 'Prefer not to say')."
-        if values['eth_other'] and not values['eth_other_text']:
-            return "You ticked 'Other ethnicity' - please specify."
+            return "Please select at least one option."
 
     @staticmethod
     def before_next_page(player, timeout_happened):
