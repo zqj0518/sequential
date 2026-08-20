@@ -13,7 +13,7 @@
                     <h3>Your Performance</h3>
                     <div class="card bg-light mb-3">
                         <div class="card-body">
-                            <h4 class="text-primary">Total Earnings: {{ total_payoff }} points</h4>
+                            <h4 class="text-primary">Total Earnings: {{ total_payoff }}</h4>
                             <p class="mb-0">Average per house: {{ average_payoff }} points</p>
                         </div>
                     </div>
@@ -47,27 +47,22 @@
 
                     <table class="table">
                         <tr>
-                            <td>✅ Below QV (Good Deals):</td>
-                            <td><strong>{{ deals_below_qv }}</strong></td>
+                            <td>✅ Sold above QV:</td>
+                            <td><strong>{{ deals_above_qv }}</strong></td>
                         </tr>
                         <tr>
-                            <td>⚖️ Near QV (Fair Deals):</td>
+                            <td>⚖️ Sold near QV (within ±5%):</td>
                             <td><strong>{{ deals_near_qv }}</strong></td>
                         </tr>
                         <tr>
-                            <td>❌ Above QV (Expensive):</td>
-                            <td><strong>{{ deals_above_qv }}</strong></td>
+                            <td>🔻 Sold below QV:</td>
+                            <td><strong>{{ deals_below_qv }}</strong></td>
                         </tr>
                     </table>
                 </div>
             </div>
 
             <hr class="my-4">
-
-            <div class="alert alert-info">
-                <h5>💵 Payment Information</h5>
-                <p class="mb-0">Your total earnings: <strong>{{ total_payoff }} points</strong></p>
-            </div>
 
             {% if treatment == 'qv_point' %}
             <div class="alert alert-secondary">
